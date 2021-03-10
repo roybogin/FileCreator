@@ -1,1 +1,1 @@
-python "%~dp0fileCreator.py" %1
+python "%~dp0..\fileCreator.py" %1
