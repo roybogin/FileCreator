@@ -1,5 +1,6 @@
 import os
 import textract
+import sys
 from enum import Enum
 import re
 
@@ -313,9 +314,8 @@ filename "C:/Users/roybo/Desktop/University/shortcuts/shortcuts.lyx"
 \numeric off
 :
 \end_layout'''
-    assignment_path = r"C:\Users\roybo\Downloads\EX1 2021 (1).pdf"
+    assignment_path = sys.argv[1]
     assignment_text = textract.process(assignment_path).decode('UTF-8')
-    #print(assignment_text)
     calculated_subject = get_subject(assignment_text)
     if subject is None:
         if calculated_subject is None:
