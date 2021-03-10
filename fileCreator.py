@@ -111,7 +111,7 @@ def main():
 if __name__ == '__main__':
     get_path = r'C:\Users\roybo\Desktop\University\semester 2'
     create_folder_path = r'C:\Users\roybo\OneDrive\University'
-    dups_in_create = True
+    dups_in_create = False
     subject = None
     hw_number = None
     number_quest = None
