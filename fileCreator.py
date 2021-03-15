@@ -6,29 +6,20 @@ import re
 
 
 class Subject(Enum):
-    Logics = {'file_name': 'logics', 'heb': 'לוגיקה למדעי המחשב', 'folder': 'Logics', 'hw_search': 'לוגיקה', 'question_sym': r'\.(\d)'}
-    Algebra_b1 = {'file_name': 'algebra_b1', 'heb': 'אלגברה ב1', 'folder': 'Algebra b1', 'hw_search': 'אלגברה ב', 'question_sym': r'\.(\d)'}
-    Calculus_2a = {'file_name': 'calculus_2a', 'heb': 'חדו"א 2א', 'folder': 'Calculus 2a', 'hw_search': 'חדו"א', 'question_sym': r'\.(\d)'}
-    Computational_models = {'file_name': 'computational_models', 'heb': 'מודלים חישוביים', 'folder': 'Computational Models', 'hw_search': 'מודלים', 'question_sym': r'\.(\d)'}
-    Computer_structure = {'file_name': 'computer_structure', 'heb': 'מבנה מחשבים', 'folder': 'Computer Structure', 'hw_search': 'מבנה מחשבים', 'question_sym': r'\.(\d)'}
-    Data_structures = {'file_name': 'data_structures', 'heb': 'מבני נתונים', 'folder': 'Data Structures', 'hw_search': 'מבני נתונים', 'question_sym': r'\.(\d)'}
-    Linear_2a = {'file_name': 'linear_2a', 'heb': 'אלגברה ליניארית 2א', 'folder': 'Linear 2a', 'hw_search': 'ליניארית', 'question_sym': r'\.(\d)'}
-    Number_theory = {'file_name': 'number_theory', 'heb': 'תורת המספרים', 'folder': 'Number Theory', 'hw_search': 'תורת המספרים', 'question_sym': r'\.(\d)'}
+    Logics = {'file_name': 'logics', 'heb': 'לוגיקה למדעי המחשב', 'folder': 'Logics', 'hw_search': 'לוגיקה', 'question_sym': r'\.(\d+)'}
+    Algebra_b1 = {'file_name': 'algebra_b1', 'heb': 'אלגברה ב1', 'folder': 'Algebra b1', 'hw_search': 'אלגברה ב', 'question_sym': r'\.(\d+)'}
+    Calculus_2a = {'file_name': 'calculus_2a', 'heb': 'חדו"א 2א', 'folder': 'Calculus 2a', 'hw_search': 'חדו"א', 'question_sym': r'\.(\d+)'}
+    Computational_models = {'file_name': 'computational_models', 'heb': 'מודלים חישוביים', 'folder': 'Computational Models', 'hw_search': 'מודלים', 'question_sym': r'\.(\d+)'}
+    Computer_structure = {'file_name': 'computer_structure', 'heb': 'מבנה מחשבים', 'folder': 'Computer Structure', 'hw_search': 'מבנה מחשבים', 'question_sym': r'\.(\d+)'}
+    Data_structures = {'file_name': 'data_structures', 'heb': 'מבני נתונים', 'folder': 'Data Structures', 'hw_search': 'מבני נתונים', 'question_sym': r'\.(\d+)'}
+    Linear_2a = {'file_name': 'linear_2a', 'heb': 'אלגברה ליניארית 2א', 'folder': 'Linear 2a', 'hw_search': 'לינארית', 'question_sym': r'\.(\d+)'}
+    Number_theory = {'file_name': 'number_theory', 'heb': 'תורת המספרים', 'folder': 'Number Theory', 'hw_search': 'תורת המספרים', 'question_sym': r'\.(\d+)'}
 
 
 def rep(s, **kwargs):
     for key in kwargs:
         s = s.replace('{'+key+'}', str(kwargs[key]))
     return s
-
-
-def capitalize(sub):
-    sub = sub.lower()
-    spl = sub.split()
-    for idx, word in enumerate(spl):
-        if len(word) > 2:
-            spl[idx] = word.capitalize()
-    return ' '.join(spl)
 
 
 def hw_num(folder_path, create_file_path, sub):
@@ -109,13 +100,6 @@ def main():
 
 
 if __name__ == '__main__':
-    get_path = r'C:\Users\roybo\Desktop\University\semester 2'
-    create_folder_path = r'C:\Users\roybo\OneDrive\University'
-    dups_in_create = False
-    subject = None
-    hw_number = None
-    number_quest = None
-    get_lines = 3
     default_file = r'''#LyX 2.3 created this file. For more info see http://www.lyx.org/
 \lyxformat 544
 \begin_document
@@ -314,7 +298,15 @@ filename "C:/Users/roybo/Desktop/University/shortcuts/shortcuts.lyx"
 \numeric off
 :
 \end_layout'''
-    assignment_path = sys.argv[1]
+    get_path = r'C:\Users\roybo\Desktop\University\semester 2'
+    create_folder_path = r'C:\Users\roybo\OneDrive\University'
+    dups_in_create = True
+    subject = None
+    hw_number = None
+    number_quest = None
+    get_lines = 3
+    assignment_path = None
+    assignment_path = assignment_path if assignment_path is not None else sys.argv[1]
     assignment_text = textract.process(assignment_path).decode('UTF-8')
     calculated_subject = get_subject(assignment_text)
     if subject is None:
@@ -325,7 +317,7 @@ filename "C:/Users/roybo/Desktop/University/shortcuts/shortcuts.lyx"
     calculated_questions = count_questions(assignment_text, subject)
     if number_quest is None:
         if calculated_questions is None:
-            raise Exception("can't detect quesion number")
+            raise Exception("can't detect question number")
         else:
             number_quest = calculated_questions
     main()
