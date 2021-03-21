@@ -1,5 +1,4 @@
 import os
-import textract
 from tika import parser
 import sys
 from enum import Enum
@@ -7,12 +6,12 @@ import re
 
 
 class Subject(Enum):
-    Logics = {'file_name': 'logics', 'heb': 'לוגיקה למדעי המחשב', 'folder': 'Logics', 'hw_search': 'לוגיקה', 'question_sym': r'\.(\d+)'}
-    Algebra_b1 = {'file_name': 'algebra_b1', 'heb': 'אלגברה ב1', 'folder': 'Algebra b1', 'hw_search': 'אלגברה ב', 'question_sym': r'\.(\d+)'}
+    Logics = {'file_name': 'logics', 'heb': 'לוגיקה למדעי המחשב', 'folder': 'Logics', 'hw_search': 'לוגיקה'[::-1], 'question_sym': r'\.(\d+)'}
+    Algebra_b1 = {'file_name': 'algebra_b1', 'heb': 'אלגברה ב1', 'folder': 'Algebra b1', 'hw_search': 'אלגברה ב1', 'question_sym': r'\.(\d+)'}
     Calculus_2a = {'file_name': 'calculus_2a', 'heb': 'חדו"א 2א', 'folder': 'Calculus 2a', 'hw_search': 'חדו"א', 'question_sym': r'\.(\d+)'}
     Computational_models = {'file_name': 'computational_models', 'heb': 'מודלים חישוביים', 'folder': 'Computational Models', 'hw_search': 'Computational', 'question_sym': r'(\d+)\.'}
-    Computer_structure = {'file_name': 'computer_structure', 'heb': 'מבנה מחשבים', 'folder': 'Computer Structure', 'hw_search': 'מבנה מחשבים', 'question_sym': r'\.(\d+)'}
-    Data_structures = {'file_name': 'data_structures', 'heb': 'מבני נתונים', 'folder': 'Data Structures', 'hw_search': 'מבני נתונים', 'question_sym': r'\.(\d+)'}
+    Computer_structure = {'file_name': 'computer_structure', 'heb': 'מבנה מחשבים', 'folder': 'Computer Structure', 'hw_search': 'מחשבים', 'question_sym': r':(\d+)'}
+    Data_structures = {'file_name': 'data_structures', 'heb': 'מבני נתונים', 'folder': 'Data Structures', 'hw_search': 'נתונים', 'question_sym': r'(\d+)שאלה'}
     Linear_2a = {'file_name': 'linear_2a', 'heb': 'אלגברה ליניארית 2א', 'folder': 'Linear 2a', 'hw_search': 'לינארית', 'question_sym': r'\.(\d+)'}
     Number_theory = {'file_name': 'number_theory', 'heb': 'תורת המספרים', 'folder': 'Number Theory', 'hw_search': 'תורת המספרים', 'question_sym': r'\.(\d+)'}
 
@@ -61,7 +60,15 @@ def generate_questions():
 
 
 def get_subject(text):
-    begin = '\n'.join(text.split('\n')[:get_lines])
+    def line_lst(lst):
+        ret = []
+        idx = 0
+        while idx < len(lst) and len(ret) < get_lines:
+            if lst[idx] != '':
+                ret.append(lst[idx])
+            idx += 1
+        return ret
+    begin = '\n'.join(line_lst(text.split('\n')))
     for sub in Subject:
         s = sub.value['hw_search']
         if any("\u0590" <= c <= "\u05EA" for c in s):
@@ -308,8 +315,8 @@ filename "C:/Users/roybo/Desktop/University/shortcuts/shortcuts.lyx"
     subject = None
     hw_number = None
     number_quest = None
-    get_lines = 3
-    assignment_path = r"C:\Users\roybo\Desktop\temp\models.pdf"
+    get_lines = 5
+    assignment_path = None
     assignment_path = assignment_path if assignment_path is not None else sys.argv[1]
     assignment_text = parser.from_file(assignment_path)['content'].strip()
     # try:
