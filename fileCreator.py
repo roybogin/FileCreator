@@ -1,5 +1,6 @@
 import os
 import textract
+from tika import parser
 import sys
 from enum import Enum
 import re
@@ -9,7 +10,7 @@ class Subject(Enum):
     Logics = {'file_name': 'logics', 'heb': 'לוגיקה למדעי המחשב', 'folder': 'Logics', 'hw_search': 'לוגיקה', 'question_sym': r'\.(\d+)'}
     Algebra_b1 = {'file_name': 'algebra_b1', 'heb': 'אלגברה ב1', 'folder': 'Algebra b1', 'hw_search': 'אלגברה ב', 'question_sym': r'\.(\d+)'}
     Calculus_2a = {'file_name': 'calculus_2a', 'heb': 'חדו"א 2א', 'folder': 'Calculus 2a', 'hw_search': 'חדו"א', 'question_sym': r'\.(\d+)'}
-    Computational_models = {'file_name': 'computational_models', 'heb': 'מודלים חישוביים', 'folder': 'Computational Models', 'hw_search': 'מודלים', 'question_sym': r'\.(\d+)'}
+    Computational_models = {'file_name': 'computational_models', 'heb': 'מודלים חישוביים', 'folder': 'Computational Models', 'hw_search': 'Computational', 'question_sym': r'(\d+)\.'}
     Computer_structure = {'file_name': 'computer_structure', 'heb': 'מבנה מחשבים', 'folder': 'Computer Structure', 'hw_search': 'מבנה מחשבים', 'question_sym': r'\.(\d+)'}
     Data_structures = {'file_name': 'data_structures', 'heb': 'מבני נתונים', 'folder': 'Data Structures', 'hw_search': 'מבני נתונים', 'question_sym': r'\.(\d+)'}
     Linear_2a = {'file_name': 'linear_2a', 'heb': 'אלגברה ליניארית 2א', 'folder': 'Linear 2a', 'hw_search': 'לינארית', 'question_sym': r'\.(\d+)'}
@@ -62,7 +63,10 @@ def generate_questions():
 def get_subject(text):
     begin = '\n'.join(text.split('\n')[:get_lines])
     for sub in Subject:
-        if sub.value['hw_search'] in begin:
+        s = sub.value['hw_search']
+        if any("\u0590" <= c <= "\u05EA" for c in s):
+            s = ' '.join(s.split()[::-1])
+        if s in begin:
             return sub
     return None
 
@@ -305,9 +309,14 @@ filename "C:/Users/roybo/Desktop/University/shortcuts/shortcuts.lyx"
     hw_number = None
     number_quest = None
     get_lines = 3
-    assignment_path = None
+    assignment_path = r"C:\Users\roybo\Desktop\temp\models.pdf"
     assignment_path = assignment_path if assignment_path is not None else sys.argv[1]
-    assignment_text = textract.process(assignment_path).decode('UTF-8')
+    assignment_text = parser.from_file(assignment_path)['content'].strip()
+    # try:
+    #     assignment_text = textract.process(assignment_path).decode('UTF-8')
+    # except UnicodeDecodeError as e:
+    #     print(parser.from_file(assignment_path))
+
     calculated_subject = get_subject(assignment_text)
     if subject is None:
         if calculated_subject is None:
