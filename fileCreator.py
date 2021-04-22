@@ -1,4 +1,5 @@
 import os
+import tika
 from tika import parser
 import sys
 from enum import Enum
@@ -317,21 +318,22 @@ filename "C:/Users/roybo/Desktop/University/shortcuts/shortcuts.lyx"
     number_quest = None
     get_lines = 5
     assignment_path = None
-    assignment_path = assignment_path if assignment_path is not None else sys.argv[1]
-    assignment_text = parser.from_file(assignment_path)['content'].strip()
+    if subject is None or hw_number is None:
+        assignment_path = assignment_path if assignment_path is not None else sys.argv[1]
+        assignment_text = parser.from_file(assignment_path)['content'].strip()
     # try:
     #     assignment_text = textract.process(assignment_path).decode('UTF-8')
     # except UnicodeDecodeError as e:
     #     print(parser.from_file(assignment_path))
 
-    calculated_subject = get_subject(assignment_text)
     if subject is None:
+        calculated_subject = get_subject(assignment_text)
         if calculated_subject is None:
             raise Exception("can't detect subject")
         else:
             subject = calculated_subject
-    calculated_questions = count_questions(assignment_text, subject)
     if number_quest is None:
+        calculated_questions = count_questions(assignment_text, subject)
         if calculated_questions is None:
             raise Exception("can't detect question number")
         else:
