@@ -318,7 +318,7 @@ filename "C:/Users/roybo/Desktop/University/shortcuts/shortcuts.lyx"
     number_quest = None
     get_lines = 5
     assignment_path = None
-    if subject is None or hw_number is None:
+    if subject is None or number_quest is None:
         assignment_path = assignment_path if assignment_path is not None else sys.argv[1]
         assignment_text = parser.from_file(assignment_path)['content'].strip()
     # try:
